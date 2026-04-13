@@ -10,35 +10,58 @@ class LoginPageWidget extends StatefulWidget {
 }
 
 class _LoginPageWidgetState extends State<LoginPageWidget> {
-  
   final _authService = AuthService();
-  
+
   final _formKey = GlobalKey<FormState>();
 
   final _usuarioController = TextEditingController();
   final _senhaController = TextEditingController();
 
-  bool _isLoading = false;
+  bool _isLoading = true;
   bool _rememberMe = false;
   bool isPasswordVisible = true;
 
+  Future<void> _checkRememberedUser() async {
+    await Future.delayed(Duration(seconds: 2));
+    final rememberedUser = await _authService.getRememberedUser();
+    //houve usuário autenticado e persistido e não expirado (5min)
+    if (rememberedUser != null) {
+      _usuarioController.text = rememberedUser; //atribuição do usuario no form
+      setState(() {
+        _rememberMe = true; //marca o checkbox de lembrar-me
+      });
+    }
+    setState(() {
+      _isLoading = false; //oculta o indicador de carregamento
+    });
+  }
 
   Future<void> _handleLogin() async {
     if (_formKey.currentState!.validate()) {
       final _usuarioValue = _usuarioController.text;
       final _senhaValue = _senhaController.text;
-      
-      final isValid = await _authService.authenticate(_usuarioValue, _senhaValue);
+
+      final isValid = await _authService.authenticate(
+        _usuarioValue,
+        _senhaValue,
+      );
 
       if (isValid) {
         await _authService.saveRememberedUser(_usuarioValue, _rememberMe);
 
         if (mounted) {
-          Navigator.of(context)
-          .pushReplacement(MaterialPageRoute(builder:(context) => HomePageWidget()));
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => HomePageWidget()),
+          );
         }
       }
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _checkRememberedUser();
   }
 
   @override
@@ -46,7 +69,16 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
     return Scaffold(
       appBar: AppBar(title: Text('Autenticação')),
       body: _isLoading
-          ? CircularProgressIndicator()
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 10),
+                  Text('Carregando...', style: TextStyle(fontSize: 20)),
+                ],
+              ),
+            )
           : SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsetsGeometry.all(30),
