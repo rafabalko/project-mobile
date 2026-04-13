@@ -54,6 +54,17 @@ class _LoginPageWidgetState extends State<LoginPageWidget> {
             MaterialPageRoute(builder: (context) => HomePageWidget()),
           );
         }
+      } else {
+        if (mounted) {}
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Usuário ou senha inválidos! Tente Novamente.'),
+            backgroundColor: Colors.redAccent,
+            duration: Duration(seconds: 1),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
       }
     }
   }
