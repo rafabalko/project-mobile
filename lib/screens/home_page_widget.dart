@@ -76,7 +76,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
             SizedBox(width: 4),
             Text('Uso do Navigator'),
           ],
-        )
+        ),
       ],
     );
   }
@@ -125,11 +125,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                         ),
                         SizedBox(height: 12),
                         Text(
-                          'Guilherme de Cleva Farto',
+                          'Rafael Balko',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 4),
-                        Text('guilherme.farto@gmail.com'),
+                        Text('rafaelbalko@gmail.com'),
                       ],
                     ),
                   ),
